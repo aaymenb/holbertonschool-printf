@@ -1,30 +1,29 @@
-#ifndef _MAIN_H_
-#define _MAIN_H_
+#ifndef MAIN_H
+#define MAIN_H
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 #include <stdarg.h>
+#include <unistd.h>
+
+int _printf(const char *format, ...);
+
+int get_function(const char specifier, va_list arguments);
+int _putchar(char character);
+int print_character(va_list arguments);
+int print_string(va_list arguments);
+int print_percentage(va_list arguments);
+int print_integer(va_list arguments);
 
 /**
- *  Formats de structure - structure qui stocke different types
- *  que _printf peut imprimer et leur fonction respective
- *  Define type and args in separate lines
- *  @type: le type du format (ex: 'c', 's')
- *  @f: la fonction qui imprimera le type associé
+ * struct format_handler_structure - structure to handle format specifiers
+ * and corresponding functions
+ * @specifier: the format specifier character
+ * @function: a function pointer to the corresponding data processing function
  */
-typedef struct formats
+typedef struct format_handler_structure
+
 {
-	char type;
-	int (*f)(va_list args);
-} format_t;
+	char specifier;
+	int (*function)(va_list);
+} format_handler;
 
-int _putchar(char c);
-int _printf(const char *format, ...);
-int _print_char(va_list args);
-int _print_modulo(va_list args);
-int print_string(va_list args);
-int _print_decimal_recursive(int num);
-int _print_decimal(va_list args);
 #endif
-
