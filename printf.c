@@ -1,107 +1,66 @@
-#include "main.h"
+#include <stdarg.h>
+#include <unistd.h>
 
 /**
- * helper_format - Helper function to format and print specific types
- * @format: The type specifier character
- * @args: The variadic arguments
- * @printer: The array of PrintType_t structures
- * Return: Number of bytes written for the specific type
- */
-int helper_format(const char **format, va_list args, PrintType_t printer[])
-{
-	int writtenBytes = 0, j = 0;
-
-	for (j = 0; printer[j].type != NULL; j++)
-	{
-		if (*printer[j].type == **format)
-		{
-			writtenBytes += printer[j].print_type_function(args);
-			return (writtenBytes);
-		}
-	}
-
-	_putchar('%');
-	_putchar(**format);
-	writtenBytes += 2;
-
-	return (writtenBytes);
-}
-
-/**
- * process_percent - Process the double percent (%%) format specifier
- * @writtenBytes: Pointer to the count of written bytes
- */
-void process_percent(int *writtenBytes)
-{
-	_putchar('%');
-	(*writtenBytes)++;
-}
-
-/**
- * process_format - Process the format string and print formatted output
- * @format: The format string
- * @args: The variadic arguments
- * @printer: The array of PrintType_t structures
- * Return: Number of bytes written for the entire formatted output
- */
-int process_format(const char *format, va_list args, PrintType_t printer[])
-{
-	int writtenBytes = 0;
-
-	while (*format)
-	{
-		if (*format == '%')
-		{
-			format++;
-			if (*format == '%')
-			{
-				process_percent(&writtenBytes);
-			}
-			else if (*format == '\0')
-			{
-				return (-1);
-			}
-			else
-			{
-				writtenBytes += helper_format(&format, args, printer);
-			}
-		}
-		else
-		{
-			_putchar(*format);
-			writtenBytes++;
-		}
-		format++;
-	}
-
-	return (writtenBytes);
-}
-
-/**
- * _printf - Format a string and print it in the console
- * @format: The string formatted with variadic arguments
- * @...: The variadic arguments
- * Return: Number of bytes printed in the console
- * without the null byte.
+ * _printf - Implémentation simplifiée de printf.
+ * @format: La chaîne de format contenant les spécificateurs.
+ *
+ * Return: Le nombre de caractères imprimés.
  */
 int _printf(const char *format, ...)
 {
-	int writtenBytes = 0;
 	va_list args;
-	PrintType_t printer[] = {
-		{"c", print_char},
-		{"s", print_string},
-		{"d", print_integer},
-		{"i", print_integer},
-		{"b", print_binary},
-		{NULL, NULL}};
 
-	if (format == NULL)
-		return (-1);
+	int count = 0; /* Compteur des caractères imprimés */
+	int i, j; /* Déclarer les variables i et j avant les boucles */
 
+	/* Initialiser la liste d'arguments */
 	va_start(args, format);
-	writtenBytes = process_format(format, args, printer);
+
+	/* Parcourir la chaîne de format */
+	for (i = 0; format[i] != '\0'; i++) {
+		if (format[i] == '%') {
+			/* Si on trouve un '%', on regarde ce qui suit */
+			i++; /* Passer au caractère suivant */
+
+			if (format[i] == 'c') {
+				/* Spécificateur pour un caractère */
+				char c = va_arg(args, int); /* Récupérer le caractère */
+				write(1, &c, 1); /* Imprimer le caractère */
+				count++; /* Augmenter le compteur */
+			}
+			else if (format[i] == 's') {
+				/* Spécificateur pour une chaîne de caractères */
+				char *str = va_arg(args, char*);
+
+				/* Si la chaîne est NULL, afficher "(null)" */
+				if (str == NULL) {
+					str = "(null)";
+				}
+
+				/* Imprimer la chaîne caractère par caractère */
+				for (j = 0; str[j] != '\0'; j++) {
+					write(1, &str[j], 1);
+					count++; /* Compter les caractères */
+				}
+			}
+			else if (format[i] == '%') {
+				/* Si on trouve '%%', afficher un '%' littéral */
+				write(1, "%", 1);
+				count++; /* Compter le caractère '%' */
+			}
+		}
+		else {
+			/* Si ce n'est pas un '%', on imprime le caractère tel quel */
+			write(1, &format[i], 1);
+			count++; /* Compter les caractères */
+		}
+	}
+
+	/* Nettoyer la liste d'arguments */
 	va_end(args);
 
-	return (writtenBytes);
+	/* Retourner le nombre de caractères imprimés */
+	return (count);
 }
+
