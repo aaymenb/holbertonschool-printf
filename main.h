@@ -1,34 +1,30 @@
-#ifndef MAIN_H
-#define MAIN_H
+#ifndef _MAIN_H_
+#define _MAIN_H_
 
-#include <unistd.h>
-#include <limits.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include <stdarg.h>
 
 /**
- * struct format_sp - Struct for format specifiers and
- * their corresponding functions
- * @specifi: The format specifier character
- * ('c' for char, 's' for string)
- * @print_func: Function pointer to
- * the function that prints the corresponding type
+ *  Formats de structure - structure qui stocke different types
+ *  que _printf peut imprimer et leur fonction respective
+ *  Define type and args in separate lines
+ *  @type: le type du format (ex: 'c', 's')
+ *  @f: la fonction qui imprimera le type associé
  */
-
-typedef struct format_sp
+typedef struct formats
 {
-	char specifi;
-	int (*print_func)(va_list args);
-} sp_t;
+	char type;
+	int (*f)(va_list args);
+} format_t;
 
-int print_char(va_list args);
-int print_string(va_list args);
-int printf(const char *format, ...);
-int print_percent(va_list args);
 int _putchar(char c);
 int _printf(const char *format, ...);
-int print_non(char num1, char num2);
-int print_int(va_list ap);
-int print_dec(va_list ap);
-
+int _print_char(va_list args);
+int _print_modulo(va_list args);
+int print_string(va_list args);
+int _print_decimal_recursive(int num);
+int _print_decimal(va_list args);
 #endif
+
