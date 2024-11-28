@@ -1,31 +1,29 @@
 #ifndef MAIN_H
 #define MAIN_H
-#include <unistd.h>
-#include <limits.h>
-#include <stdio.h>
-#include <stdarg.h>
-#include <stdlib.h>
-#include <string.h>
-/**
- * struct matchs - Listes des specifier connus
- * @form: la lettre du specifier
- * @f: le pointeur de fonction
- */
-typedef struct matchs
-{
-	char form;
-	int (*f)(va_list args);
-} match;
 
-int c_end_s(char *s);
-int _count(const char *c);
-int _putchar(char c);
-int _putstring(char *s);
+#include <stdarg.h>
+#include <unistd.h>
+
 int _printf(const char *format, ...);
-int printchar(va_list args);
-int printstring(va_list args);
-int printint(va_list args);
-int printnum(int num);
-int printpercent(va_list args);
-int _abs(int n);
-#endif /* MAIN_H */
+
+int get_function(const char specifier, va_list arguments);
+int _putchar(char character);
+int print_character(va_list arguments);
+int print_string(va_list arguments);
+int print_percentage(va_list arguments);
+int print_integer(va_list arguments);
+
+/**
+ * struct format_handler_structure - structure to handle format specifiers
+ * and corresponding functions
+ * @specifier: the format specifier character
+ * @function: a function pointer to the corresponding data processing function
+ */
+typedef struct format_handler_structure
+
+{
+	char specifier;
+	int (*function)(va_list);
+} format_handler;
+
+#endif
