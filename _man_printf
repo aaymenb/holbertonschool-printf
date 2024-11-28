@@ -1,0 +1,48 @@
+.TH _printf 3 "26 February 2024" "0.5" "Man page"
+.SH NAME
+.B _printf
+- Print formatted output to stdout.
+.SH SYNOPSIS
+int _printf(const char *format, ...);
+.SH DESCRIPTION
+The _printf() function is used to print formatted output to the standard output (stdout) stream.
+It formats and prints the optional arguments according to the specified format string.
+.SH CONVERSION SPECIFIERS
+%c - Character format
+.sp
+%s - String format
+.sp
+%i - Integer format
+.sp
+%d - Decimal format
+.Pp
+.SH RETURN VALUE
+.Bl
+Upon successful completion, '_printf' returns the number of characters printed (excluding the null byte used to end output to strings).
+If an error occurs, a negative value is returned.
+.SH EXAMPLES
+To print character:
+.sp
+.RS
+_printf("%c\n", 'A');
+.RE
+.sp
+To print string:
+.sp
+.RS
+_printf("%s\n", "Hello");
+.RE
+.sp
+To print integer:
+.sp
+.RS
+_printf("%i\n", 10);
+.RE
+.sp
+To print decimal:
+.sp
+.RS
+_printf("%d\n", 10);
+.RE
+	.SH SEE ALSO
+.I printf(3)
