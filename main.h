@@ -1,31 +1,30 @@
-#ifndef MAIN_H
-#define MAIN_H
-#include <unistd.h>
-#include <limits.h>
+#ifndef _MAIN_H_
+#define _MAIN_H_
+
 #include <stdio.h>
-#include <stdarg.h>
 #include <stdlib.h>
 #include <string.h>
-/**
- * struct matchs - Listes des specifier connus
- * @form: la lettre du specifier
- * @f: le pointeur de fonction
- */
-typedef struct matchs
-{
-	char form;
-	int (*f)(va_list args);
-} match;
+#include <stdarg.h>
 
-int c_end_s(char *s);
-int _count(const char *c);
+/**
+ *  Formats de structure - structure qui stocke different types
+ *  que _printf peut imprimer et leur fonction respective
+ *  Define type and args in separate lines
+ *  @type: le type du format (ex: 'c', 's')
+ *  @f: la fonction qui imprimera le type associé
+ */
+typedef struct formats
+{
+	char type;
+	int (*f)(va_list args);
+} format_t;
+
 int _putchar(char c);
-int _putstring(char *s);
 int _printf(const char *format, ...);
-int printchar(va_list args);
-int printstring(va_list args);
-int printint(va_list args);
-int printnum(int num);
-int printpercent(va_list args);
-int _abs(int n);
-#endif /* MAIN_H */
+int _print_char(va_list args);
+int _print_modulo(va_list args);
+int print_string(va_list args);
+int _print_decimal_recursive(int num);
+int _print_decimal(va_list args);
+#endif
+

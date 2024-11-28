@@ -1,75 +1,66 @@
-#include <stdio.h>
 #include <stdarg.h>
-#include "main.h"
+#include <unistd.h>
 
 /**
- * _printf - main function which prints each char in format
- * and each variadic argument of type char "c", string "s"
- * percent "%", decimal integer "d" or "i" and returns
- * total number of char printed (count)
- * any other type as specifier is considered non-valid types
- * and are simply printed as normal char in the standard output
- * @format: character string composed of zero or more directives
- * is the string to be printed in standard output
- * Remark1: Datatype struct defined in header and contains
- * char *specifier which is 1st letter of each type followed by
- * function pointer (*print_type) pointing to function
- * which prints arguments of associated type and returns
- * number of char printed to count value
- * Remark2: printfall is va_list containting
- * all the variadic arguments to print
- * Remark3: taking printfall as parameter of
- * datatype[j].print_type permits to not call va_arg macro
- * at that moment with unknown/variable type as 2nd parameter
- * Remark4: if datatype[j].specifier reaches NULL, it means
- * it has not found any valid specifier but has found a
- * non-valid one, so they are printed and counts increases
- * by 2 char (% and letter of non_valid specifier (ex: %u))
- * Return: returns int count which is the total number of
- * char printed by _printf in the standard output
-*/
-
-
+ * _printf - Implémentation simplifiée de printf.
+ * @format: La chaîne de format contenant les spécificateurs.
+ *
+ * Return: Le nombre de caractères imprimés.
+ */
 int _printf(const char *format, ...)
 {
-	Datatype datatype[] = {
-		{"c", print_char}, {"s", print_string}, {"%", print_percent},
-		{"d", print_decimalint}, {"i", print_decimalint}, {NULL, NULL}
-};
-	va_list printfall;
-	int i, j, count;
+	va_list args;
 
-	count = 0, i = 0;
-	va_start(printfall, format);
+	int count = 0; /* Compteur des caractères imprimés */
+	int i, j; /* Déclarer les variables i et j avant les boucles */
 
-	if (format == NULL || (format[0] == '%' && format[1] == '\0'))
-	{	va_end(printfall);
-		return (-1);
+	/* Initialiser la liste d'arguments */
+	va_start(args, format);
+
+	/* Parcourir la chaîne de format */
+	for (i = 0; format[i] != '\0'; i++) {
+		if (format[i] == '%') {
+			/* Si on trouve un '%', on regarde ce qui suit */
+			i++; /* Passer au caractère suivant */
+
+			if (format[i] == 'c') {
+				/* Spécificateur pour un caractère */
+				char c = va_arg(args, int); /* Récupérer le caractère */
+				write(1, &c, 1); /* Imprimer le caractère */
+				count++; /* Augmenter le compteur */
+			}
+			else if (format[i] == 's') {
+				/* Spécificateur pour une chaîne de caractères */
+				char *str = va_arg(args, char*);
+
+				/* Si la chaîne est NULL, afficher "(null)" */
+				if (str == NULL) {
+					str = "(null)";
+				}
+
+				/* Imprimer la chaîne caractère par caractère */
+				for (j = 0; str[j] != '\0'; j++) {
+					write(1, &str[j], 1);
+					count++; /* Compter les caractères */
+				}
+			}
+			else if (format[i] == '%') {
+				/* Si on trouve '%%', afficher un '%' littéral */
+				write(1, "%", 1);
+				count++; /* Compter le caractère '%' */
+			}
+		}
+		else {
+			/* Si ce n'est pas un '%', on imprime le caractère tel quel */
+			write(1, &format[i], 1);
+			count++; /* Compter les caractères */
+		}
 	}
-	while (format != NULL && format[i] != '\0')
-	{
-		if (format[i] != '%')
-		{
-			_putchar(format[i]);
-			count++;
-		} else
-		{	i++, j = 0;
-			while (datatype[j].specifier != NULL)
-			{
-				if (format[i] == *datatype[j].specifier)
-				{
-					count += datatype[j].print_type(printfall);
-					break;
-				} j++;
-			}
-			if (datatype[j].specifier == NULL)
-			{
-				_putchar('%');
-				_putchar(format[i]);
-				count += 2;
-				va_arg(printfall, int *);
-			}
-		} i++;
-	} va_end(printfall);
+
+	/* Nettoyer la liste d'arguments */
+	va_end(args);
+
+	/* Retourner le nombre de caractères imprimés */
 	return (count);
 }
+
