@@ -1,66 +1,51 @@
-#include <stdarg.h>
-#include <unistd.h>
+#include "main.h"
 
 /**
- * _printf - Implémentation simplifiée de printf.
- * @format: La chaîne de format contenant les spécificateurs.
+ * _printf - Our custom printf function to format and print data
  *
- * Return: Le nombre de caractères imprimés.
+ * @format: The format string containing the characters and format specifiers
+ *
+ * Return: The number of characters printed or -1 if the format string is NULL
  */
 int _printf(const char *format, ...)
 {
 	va_list args;
+	int index = 0, char_count = 0;
+	int (*func)(va_list) = NULL;
 
-	int count = 0; /* Compteur des caractères imprimés */
-	int i, j; /* Déclarer les variables i et j avant les boucles */
-
-	/* Initialiser la liste d'arguments */
 	va_start(args, format);
 
-	/* Parcourir la chaîne de format */
-	for (i = 0; format[i] != '\0'; i++) {
-		if (format[i] == '%') {
-			/* Si on trouve un '%', on regarde ce qui suit */
-			i++; /* Passer au caractère suivant */
+	if (format == NULL)
+		return (-1);
 
-			if (format[i] == 'c') {
-				/* Spécificateur pour un caractère */
-				char c = va_arg(args, int); /* Récupérer le caractère */
-				write(1, &c, 1); /* Imprimer le caractère */
-				count++; /* Augmenter le compteur */
-			}
-			else if (format[i] == 's') {
-				/* Spécificateur pour une chaîne de caractères */
-				char *str = va_arg(args, char*);
-
-				/* Si la chaîne est NULL, afficher "(null)" */
-				if (str == NULL) {
-					str = "(null)";
-				}
-
-				/* Imprimer la chaîne caractère par caractère */
-				for (j = 0; str[j] != '\0'; j++) {
-					write(1, &str[j], 1);
-					count++; /* Compter les caractères */
-				}
-			}
-			else if (format[i] == '%') {
-				/* Si on trouve '%%', afficher un '%' littéral */
-				write(1, "%", 1);
-				count++; /* Compter le caractère '%' */
+	while (format[index])
+	{
+		if (format[index] != '%')
+		{
+			_putchar(format[index]);
+			index++;
+			char_count++;
+			continue;
+		}
+		index++;	/* Move to the next character after '%' */
+		/* Get the print function for the next format specifier */
+		func = get_print_func(&format[index]);
+		if (func != NULL)	/* If a valid print function is found */
+			char_count += func(args);	/* Call print function with variable arguments */
+		else
+		{
+			if (format[index] == '\0') /* If next character is '\0', return -1 */
+				return (-1);
+			if (format[index] == '%') /* If next character is '%' */
+				char_count += _putchar('%'); /* print a single '%' */
+			else /* If next char is not '%' */
+			{
+				char_count += _putchar('%'); /* print '%' */
+				char_count += _putchar(format[index]); /* and then the next character */
 			}
 		}
-		else {
-			/* Si ce n'est pas un '%', on imprime le caractère tel quel */
-			write(1, &format[i], 1);
-			count++; /* Compter les caractères */
-		}
+		index++;
 	}
-
-	/* Nettoyer la liste d'arguments */
 	va_end(args);
-
-	/* Retourner le nombre de caractères imprimés */
-	return (count);
+	return (char_count);
 }
-
