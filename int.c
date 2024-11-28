@@ -1,33 +1,45 @@
-int printf_int(va_list ap)
+#include "main.h"
+
+/**
+ * _printf - produces output with printf command
+ * @format: what we want to print
+ * Return: number of characters printed withput null terminator
+ */
+
+int _printf(const char *format, ...)
 {
-    int n = va_arg(ap, int);
-    unsigned int num;
-    int len = 0;
-    int div = 1;
+	va_list args;
+	int i = 0;
+	int length = 0;
+	/*chars to be printed*/
 
-    if (n == INT_MIN)
-    {
-        len += _putchar('-');
-        num = (unsigned int)(-(n + 1)) + 1;
-    }
-    else if (n < 0)
-    {
-        len += _putchar('-');
-        num = -n;
-    }
+	va_start(args, format);
 
-    else
-    {
-        num = n;
-    }
+	if (format == NULL)
+	{
+		return (-1);
+	}
 
-    while (num / div > 9)
-        div *= 10;
-    while (div != 0)
-    {
-        len += _putchar((num / div) + '0');
-        num %= div;
-        div /= 10;
-    }
-    return (len);
+	while (format != NULL && format[i] != '\0')
+	{
+		/**
+		 * is it a format specifier ???
+		 */
+		if (format[i] == '%')
+		{
+			if (format[i + 1] == '\0')
+				return (-1);
+
+			length += selection(args, format[i + 1]);
+			i += 2;
+		}
+		else
+
+		{
+			length += _putchar(format[i]);
+			i++;
+		}
+	}
+	va_end(args);
+	return (length);
 }
