@@ -1,39 +1,48 @@
 #include "main.h"
+
 /**
- * print_integer - print a number (integer) to the standard output.
- * @arguments: a va_list containing the integer to be printed.
- * Return: the number of characters printed.
+ * printnumber - function that prints an integer
+ * @n: integer to print
+ * Return: number of characters printed
+ */
+int printnumber(int n)
+{
+	int count = 0;
+
+	if (n == -2147483648)
+	{
+		_putchar('-');
+		_putchar('2');
+		n = 147483648;
+		count += 2;
+	}
+
+	if (n < 0)
+	{
+		_putchar('-');
+		n = -n;
+		count++;
+	}
+
+	if (n / 10 != 0)
+	{
+		count += printnumber(n / 10);
+	}
+
+	_putchar(n % 10 + '0');
+	count++;
+
+	return (count);
+}
+
+/**
+ * print_integer - function that prints an integer from a va_list
+ * @arguments: va_list containing the integer to print
+ * Return: number of characters printed
  */
 int print_integer(va_list arguments)
 {
-	long int number = va_arg(arguments, int);
-	long int absolute_number = 0;
-	long int temp_number = absolute_number;
-	long int digit_position = 1;
-	int lenght = 0;
+	int number = va_arg(arguments, int);
 
-	if (number < 0)
-	{
-		absolute_number = (number * -1);
-		_putchar('-');
-		lenght++;
-	}
-	else
-	{
-		absolute_number = number;
-	}
-	temp_number = absolute_number;
-	while (temp_number > 9)
-	{
-		temp_number = temp_number / 10;
-		digit_position = digit_position * 10;
-	}
-	while (digit_position >= 1)
-	{
-		_putchar(((absolute_number / digit_position) % 10) + '0');
-		digit_position = digit_position / 10;
-
-		lenght++;
-	}
-	return (lenght);
+	return (printnumber(number));
 }
