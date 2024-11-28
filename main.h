@@ -1,29 +1,35 @@
-#ifndef MAIN_H
-#define MAIN_H
-
+#ifndef MAIN_HEADER
+#define MAIN_HEADER
 #include <stdarg.h>
+#include <stdio.h>
+#include <stdlib.h>
 #include <unistd.h>
 
-int _printf(const char *format, ...);
-
-int get_function(const char specifier, va_list arguments);
-int _putchar(char character);
-int print_character(va_list arguments);
-int print_string(va_list arguments);
-int print_percentage(va_list arguments);
-int print_integer(va_list arguments);
-
 /**
- * struct format_handler_structure - structure to handle format specifiers
- * and corresponding functions
- * @specifier: the format specifier character
- * @function: a function pointer to the corresponding data processing function
+ * struct toprint - type of argument to print/ specifier letter
+ *  and pointer to func
+ * @letter: type of specifier letter (format[i +1]) example d s c
+ * @f: function that is associated with the specifier letter ^^
  */
-typedef struct format_handler_structure
 
+/* -----------little typedef--------- */
+
+typedef struct toprint
 {
-	char specifier;
-	int (*function)(va_list);
-} format_handler;
+	char *letter;
+	int (*f)(va_list args);
+} toprint_;
+
+/* -------all functions used-------- */
+
+int print_c(va_list args);
+int _printf(const char *format, ...);
+int print_s(va_list args);
+int print_int(va_list args);
+int print_deci(va_list args);
+int print_purcent(__attribute__((unused)) va_list args);
+int _putchar(char);
+int selection(va_list args, char specifiers);
+int print_id(int n);
 
 #endif
